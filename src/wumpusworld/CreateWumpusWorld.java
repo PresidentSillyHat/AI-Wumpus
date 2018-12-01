@@ -2,32 +2,92 @@ package wumpusworld;
 
 import java.util.ArrayList;
 import java.util.List;
+import  java.lang.Math;
 
 /**
  *
  * @author Derek Wallace
  */
 public class CreateWumpusWorld {
-        public static Node[] tiles;
+    public static Node[] tiles;
     public static Node start;
-    
+
     public CreateWumpusWorld() throws Exception{
-        int[][] numberedMap=addMap();
+        int[][] numberedMap=addMap(10); //change the map size here. 
         tiles=linkNodes(numberedMap);
         DrawWorld.setBoard(numberedMap);
     }
 
-    public static int[][]addMap(){
+    public static int[][]addMap(int size){
+        boolean goldflag=false;
+        boolean wumpflag = false;
+        String endcap = "";
+        while(endcap.length()<size+2)
+        {
+            endcap+="%";
+        }
+
+
+
         List<String> line=new ArrayList();
-        line.add("%%%%%%");
-        line.add("% W G%");
-        line.add("%    %");
-        line.add("%  H %");
-        line.add("%A   %");
-        line.add("%%%%%%");
+        line.add(endcap);
+        for(int y=0;y<size;y++) {
+            String linestring = "%";
+            for (int x = 0; x < size; x++) {
+                double rand = Math.random();
+                //System.out.println(rand);
+                if (y==size-1 && x==0) {
+                    linestring+="A";
+                }
+                else if(rand<.2){
+                    linestring+="H";
+                }
+                else{
+                    linestring+=" ";
+                }
+            }
+
+           linestring+="%";
+            //System.out.println(linestring);
+            line.add(linestring);
+        }
+
+        line.add(endcap);
+       // System.out.println(line);
+        while(!goldflag) {
+            int goldx = (int) (Math.random() * ((size) + 1));
+            int goldy = (int) (Math.random() * ((size) + 1));
+            String temp = line.get(goldy);
+            char letter = temp.charAt(goldx);
+            if(letter==' '){
+                char[]linechars = temp.toCharArray();
+                linechars[goldx]='G';
+                temp=String.valueOf(linechars);
+                line.set(goldy,temp);
+                goldflag=true;
+            }
+        }
+        while(!wumpflag) {
+            int wumpx = (int) (Math.random() * ((size) + 1));
+            int wumpy = (int) (Math.random() * ((size) + 1));
+            String temp = line.get(wumpy);
+            char letter = temp.charAt(wumpx);
+            if(letter==' '){
+                char[]linechars = temp.toCharArray();
+                linechars[wumpx]='W';
+                temp=String.valueOf(linechars);
+                line.set(wumpy,temp);
+                wumpflag=true;
+            }
+        }
+        for(int x = 0; x<line.size();x++)
+        {
+            System.out.println(line.get(x));
+        }
+
         return fillMap(line);
     }
-    
+
     //fill the array representing map with numbers
     public static int[][] fillMap(List<String> lines){
         int[][] map=new int[lines.size()][lines.get(0).length()];
@@ -71,8 +131,8 @@ public class CreateWumpusWorld {
         //connect left/right
         for(int i=0;i<map.length;i++){
             for(int j=0;j<map[0].length;j++){
-                
-                if(nodeNum+1<Maze.length && (nodeNum+1)%(map[0].length)!=0){ 
+
+                if(nodeNum+1<Maze.length && (nodeNum+1)%(map[0].length)!=0){
                     Maze[nodeNum].right=Maze[nodeNum+1];
                     Maze[nodeNum+1].left=Maze[nodeNum];
                 }
@@ -93,7 +153,7 @@ public class CreateWumpusWorld {
                 nodeNum++;
             }
         }
-        
+
         return Maze;
     }
 }
