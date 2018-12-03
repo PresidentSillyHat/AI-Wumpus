@@ -18,6 +18,7 @@ public class DrawWorld extends JFrame{
     private static DrawWorld inst=null;
     public static int height;
     public static int width;
+    public static Color goHome=Color.cyan;
 
     //using static to ease repainting, personal preference
     public static DrawWorld getInstance() throws IOException{
@@ -71,15 +72,17 @@ public class DrawWorld extends JFrame{
         
                     case 0:
                         g.setColor(Color.black); //Wall
+                        g.fillRect(x, y, tileWidth, tileHeight);
                         break;
                     case 1:
-                        g.setColor(Color.blue); //wumpus
+                        g.setColor(Color.red); //wumpus
                         break;
                     case 2:
                         g.setColor(Color.cyan); //agent
                         break;
                     case 3:
-                        g.setColor(Color.black); //hole
+                        g.setColor(Color.DARK_GRAY); //hole
+                        
                         break;
                     case 4:
                         g.setColor(Color.yellow); //gold
@@ -88,7 +91,7 @@ public class DrawWorld extends JFrame{
                         //empty
                         break;
                 }
-                g.fillRect(x, y, tileWidth, tileHeight); //take out once objects are drawn
+                g.fillOval(x, y, tileWidth, tileHeight); //take out once objects are drawn
                 g.setColor(new Color(0,0,0));
                 g.drawRect(x, y, tileWidth, tileHeight); //outline for visibility
             }
@@ -110,16 +113,38 @@ public class DrawWorld extends JFrame{
                 g.setColor(Color.black); //empty
                 break;
             case 1:
-                g.setColor(Color.blue); //wumpus
+                g.setColor(Color.red); //wumpus
                 break;
             case 2:
-                g.setColor(Color.cyan); //agent
+                g.setColor(goHome); //agent
                 break;
             case 3:
                 //hole
                 break;
             case 4:
                 //gold
+                break;
+            case 5:
+                //safe
+                g.setColor(Color.green);
+                break;
+            case 6:
+                //stinky
+                g.setColor(Color.MAGENTA);
+                g.fillRect(x, y, tileWidth, tileHeight);
+                g.setColor(Color.green);
+                break;
+            case 7:
+                //breezy
+                g.setColor(Color.ORANGE);
+                g.fillRect(x, y, tileWidth, tileHeight);
+                g.setColor(Color.green);
+                break;
+            case 8:
+                //Visited
+                g.setColor(new Color(110,200,36));
+                g.fillRect(x, y, tileWidth, tileHeight);
+                g.setColor(Color.green);
                 break;
             default:
                 g.setColor(new Color(200+type*20,200+type*20,200+type*20));   //grey
@@ -133,6 +158,9 @@ public class DrawWorld extends JFrame{
         DrawWorld.getInstance();	//Repaint board to show changes
         g.dispose();	//Free up space from Graphics g
 
+    }
+    public static void goHome(){
+        goHome=Color.yellow;
     }
     
     public static void drawWumpus(int x, int y){

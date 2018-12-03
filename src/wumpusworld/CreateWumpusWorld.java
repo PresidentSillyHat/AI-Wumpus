@@ -11,18 +11,25 @@ import  java.lang.Math;
 public class CreateWumpusWorld {
     public static Node[] tiles;
     public static Node start;
+    public static int[][]RealWorld;
 
-    public CreateWumpusWorld() throws Exception{
-        int[][] numberedMap=addMap(10); //change the map size here. 
+    public CreateWumpusWorld(int n) throws Exception{
+        int[][] numberedMap=addMap(n); //change the map size here. 
         tiles=linkNodes(numberedMap);
+        RealWorld=numberedMap; //unnecessary
         DrawWorld.setBoard(numberedMap);
     }
-
+    
+    /**
+     * Creates a wumpus world of requested size
+     * @param size
+     * @return
+     */
     public static int[][]addMap(int size){
         boolean goldflag=false;
         boolean wumpflag = false;
         String endcap = "";
-        while(endcap.length()<size+2)
+        while(endcap.length()<size)//+2)
         {
             endcap+="%";
         }
@@ -30,33 +37,32 @@ public class CreateWumpusWorld {
 
 
         List<String> line=new ArrayList();
-        line.add(endcap);
+        //line.add(endcap);
         for(int y=0;y<size;y++) {
-            String linestring = "%";
+            String linestring = "";//%";
             for (int x = 0; x < size; x++) {
                 double rand = Math.random();
                 //System.out.println(rand);
                 if (y==size-1 && x==0) {
                     linestring+="A";
                 }
-                else if(rand<.2){
-                    linestring+="H";
-                }
+                else if(rand<.2){linestring+="H";}
+                
                 else{
                     linestring+=" ";
                 }
             }
 
-           linestring+="%";
+           //linestring+="%";
             //System.out.println(linestring);
             line.add(linestring);
         }
 
-        line.add(endcap);
+        //line.add(endcap);
        // System.out.println(line);
         while(!goldflag) {
-            int goldx = (int) (Math.random() * ((size) + 1));
-            int goldy = (int) (Math.random() * ((size) + 1));
+            int goldx = (int) (Math.random() * ((size) + 0));
+            int goldy = (int) (Math.random() * ((size) + 0));
             String temp = line.get(goldy);
             char letter = temp.charAt(goldx);
             if(letter==' '){
@@ -68,8 +74,8 @@ public class CreateWumpusWorld {
             }
         }
         while(!wumpflag) {
-            int wumpx = (int) (Math.random() * ((size) + 1));
-            int wumpy = (int) (Math.random() * ((size) + 1));
+            int wumpx = (int) (Math.random() * ((size) + 0));
+            int wumpy = (int) (Math.random() * ((size) + 0));
             String temp = line.get(wumpy);
             char letter = temp.charAt(wumpx);
             if(letter==' '){
@@ -136,7 +142,30 @@ public class CreateWumpusWorld {
                     Maze[nodeNum].right=Maze[nodeNum+1];
                     Maze[nodeNum+1].left=Maze[nodeNum];
                 }
-                if(map[i][j]>0){Maze[nodeNum].color=map[i][j];} //setting source colors
+                if(map[i][j]>0){
+                    Maze[nodeNum].occupant=map[i][j]; //debugging
+                    switch(map[i][j]){
+                        case 1:
+                            //wumpus
+                            Maze[nodeNum].hasWumpus=true;
+                            break;
+                        case 2:
+                            //agent
+                            Maze[nodeNum].hasAgent=true;
+                            break;
+                        case 3:
+                            //hole
+                            Maze[nodeNum].hasHole=true;
+                            break;
+                        case 4:
+                            //gold
+                            Maze[nodeNum].hasGold=true;
+                            break;
+                        default:
+                            //other
+                            break;
+                    }
+                }
                 nodeNum++;
             }
         }
