@@ -13,6 +13,7 @@ public class WumpusClauses {
     public Node[] world; //agents map
     public Node loc; //agent location
     public Node start;//home
+    public boolean hasArrow=true;
     public int width;//used for drawing
     public String direction; //direction agent is facing
     List<String> dirs=new ArrayList<>(); //directions list for movement
@@ -32,10 +33,6 @@ public class WumpusClauses {
         dirs.remove(0);
     }
     
-    //TODO: add wumpus killing
-    //      add inferences about wumpus
-    //      add tallies
-    //      add go home
     
     /**
      * The loop that runs the agent
@@ -58,7 +55,7 @@ public class WumpusClauses {
         //loop to get home
         while(loc.number!=start.number){
             //navigate to start with search method?
-            //set agent color to yellow for better understanding
+            //set agent color to yellow for better visual
             Thread.sleep(250);
             homing(loc,direction);
         }
@@ -181,6 +178,10 @@ public class WumpusClauses {
                 if(right&& loc.prev.number!=loc.right.number){dir="right";location.right.lCheck=true;break;}
                 break;
         }
+        //if you are looking at spot you think is wumpus and have arrow, fire
+        if(exists(location.inDirection(dir))){
+            if(hasArrow){shoot(location.inDirection(dir));return;}
+        }
         //move agent in appropriate direction
         if(count>1 && exists(loc.inDirection(dir)) && loc.prev.number==loc.inDirection(dir).number){turn();return;}
         if(!exists(location.inDirection(dir)) || (exists(location.inDirection(dir)) && !location.inDirection(dir).safe)){turn();return;}
@@ -193,7 +194,18 @@ public class WumpusClauses {
         drawTile(loc,2);//2 for agent
     
     }
-
+    public void shoot(Node a) throws IOException{
+        if(a.hasWumpus){
+            System.out.println("Wumpus Killed");
+            safe(a);
+        }
+        else{
+            System.out.println("Miss");
+        }
+        hasArrow=false;
+        
+    }
+    
     /**
      * Cycle to next direction
      */
@@ -222,10 +234,13 @@ public class WumpusClauses {
      * @param stinky
      */
     public void stench(Node stinky){
-        if(exists(stinky.left) && !stinky.left.safe){stinky.left.possibleWumpus++;}
-        if(exists(stinky.up) && !stinky.up.safe){stinky.up.possibleWumpus++;}
-        if(exists(stinky.right) && !stinky.right.safe){stinky.right.possibleWumpus++;}
-        if(exists(stinky.down) && !stinky.down.safe){stinky.down.possibleWumpus++;}
+        if(!loc.wCheck){ //if possible wumpus spots havent been marked at this spot yet
+            if(exists(stinky.left) && !stinky.left.safe){stinky.left.possibleWumpus++;}
+            if(exists(stinky.up) && !stinky.up.safe){stinky.up.possibleWumpus++;}
+            if(exists(stinky.right) && !stinky.right.safe){stinky.right.possibleWumpus++;}
+            if(exists(stinky.down) && !stinky.down.safe){stinky.down.possibleWumpus++;}
+            loc.wCheck=true;
+        }
     }
 
     /**

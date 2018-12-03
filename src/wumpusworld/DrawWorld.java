@@ -163,14 +163,6 @@ public class DrawWorld extends JFrame{
         goHome=Color.yellow;
     }
     
-    public static void drawWumpus(int x, int y){
-        
-    }
-    public static void drawCharacter(int x, int y){
-        
-    }
-    public static void drawGold(int x, int y){
-        
-    }
+
     
 }

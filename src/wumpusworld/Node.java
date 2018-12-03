@@ -28,9 +28,8 @@ public class Node {
     
     //to prevent looping
     public boolean lCheck=false;
-    public boolean uCheck=false;
-    public boolean rCheck=false;
-    public boolean dCheck=false;
+    public boolean wCheck=false;
+
     
     
     public Node(int num){
